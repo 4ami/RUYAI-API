@@ -44,10 +44,6 @@
 
 ###
 
-<img src="https://raw.githubusercontent.com/4AMI/4AMI/output/snake.svg" alt="Snake animation" />
-
-###
-
 <h2 align="left">Author:</h2>
 
 ###
