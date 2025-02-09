@@ -1,0 +1,7 @@
+[
+    {"role": "medical-practitionar"},
+    {"role": "medical-IT"},
+    {"role": "patient"},
+    {"role": "admin"},
+    {"role": "moderator"}
+]
