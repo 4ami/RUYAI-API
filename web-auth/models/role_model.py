@@ -1,7 +1,9 @@
 from .base_model import BaseModel
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import mapped_column, Mapped
+
 
 class RoleModel(BaseModel):
     __tablename__='ROLE'
-    _id=Column(Integer, primary_key=True, autoincrement=True)
-    role=Column(String(35), nullable=False, unique=True)
+    _id:Mapped[int]=mapped_column(Integer, primary_key=True, autoincrement=True)
+    role:Mapped[str]=mapped_column(String(35), nullable=False, unique=True)

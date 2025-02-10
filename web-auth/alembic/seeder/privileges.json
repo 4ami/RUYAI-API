@@ -1,0 +1,51 @@
+[
+    {
+        "_id": 1, 
+        "service": "upload_oct",
+        "access": true,
+        "read": true,
+        "write": true
+    },
+    {
+        "_id": 2, 
+        "service": "diagnosis_dashboard",
+        "access": true,
+        "read": true,
+        "write": false
+    },
+    {
+        "_id": 3, 
+        "service": "api_doc",
+        "access": true,
+        "read": true,
+        "write": false
+    },
+    {
+        "_id": 4, 
+        "service": "generate_key",
+        "access": true,
+        "read": true,
+        "write": true
+    },
+    {
+        "_id": 5, 
+        "service": "list_diagnosis",
+        "access": true,
+        "read": true,
+        "write": false
+    },
+    {
+        "_id": 6, 
+        "service": "search_diagnosis",
+        "access": true,
+        "read": true,
+        "write": true
+    },
+    {
+        "_id": 7, 
+        "service": "specific_diagnose_report",
+        "access": true,
+        "read": true,
+        "write": false
+    }
+]
