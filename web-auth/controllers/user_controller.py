@@ -16,6 +16,7 @@ from views import (
     #--Login Views--#
     LoginResponseBase,
     Login200,
+    Login403,
     Login404,
     Login500,
     LoginRequest
@@ -73,6 +74,8 @@ class UserController:
             # user is not exist
             if _usr is None: return Login404()
             
+            # if account is locked return early
+            if _usr.locked: return Login403()
 
             # compare credentials
             if not HashHelper.compare(
