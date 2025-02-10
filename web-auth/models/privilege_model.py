@@ -1,11 +1,11 @@
 from .base_model import BaseModel
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Integer, String, Boolean
+from sqlalchemy.orm import mapped_column, Mapped
 
 class PrivilegeModel(BaseModel):
     __tablename__='PRIVILEGES'
-    _id=Column(Integer, primary_key=True, autoincrement=True)
-    service=Column(String(35), nullable=False)
-    access=Column(Boolean, nullable=False, default=False)
-    read=Column(Boolean, nullable=False, default=False)
-    write=Column(Boolean, nullable=False, default=False)
-    role=Column(Integer, ForeignKey('ROLE._id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    _id:Mapped[int]=mapped_column(Integer, primary_key=True, autoincrement=True)
+    service:Mapped[str]=mapped_column(String(35), nullable=False)
+    access:Mapped[bool]=mapped_column(Boolean, nullable=False, default=False)
+    read:Mapped[bool]=mapped_column(Boolean, nullable=False, default=False)
+    write:Mapped[bool]=mapped_column(Boolean, nullable=False, default=False)
