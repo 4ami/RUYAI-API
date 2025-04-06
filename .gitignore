@@ -2,5 +2,5 @@
 *.env
 **/__pycache__/*
 *.venv
-model-services/_algorithims/*
-model-services/_data/*
+**/_algorithims/*
+**/_data/*
