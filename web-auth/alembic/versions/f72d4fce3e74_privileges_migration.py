@@ -26,7 +26,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         'PRIVILEGES',
-        sa.Column(name='_id', type_=sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column(name='_id', type_=sa.BigInteger(), primary_key=True, autoincrement=True),
         sa.Column(name='service', type_=sa.String(35), nullable=False),
         sa.Column(name='access', type_=sa.Boolean(), default=False, nullable=False),
         sa.Column(name='read', type_=sa.Boolean(), default=False, nullable=False),
@@ -34,7 +34,7 @@ def upgrade() -> None:
     )
 
     cols:list[sa.Column]=[
-        sa.Column(name='_id', type_=sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column(name='_id', type_=sa.BigInteger(), primary_key=True, autoincrement=True),
         sa.Column(name='service', type_=sa.String(35), nullable=False),
         sa.Column(name='access', type_=sa.Boolean(), default=False, nullable=False),
         sa.Column(name='read', type_=sa.Boolean(), default=False, nullable=False),

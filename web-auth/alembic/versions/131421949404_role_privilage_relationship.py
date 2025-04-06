@@ -27,8 +27,8 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         'ROLE_PRIVILEGES',
-        sa.Column(name='role', type_=sa.Integer(), nullable=False, primary_key=True),
-        sa.Column(name='privilege', type_=sa.Integer(), nullable=False, primary_key=True)
+        sa.Column(name='role', type_=sa.BigInteger(), nullable=False, primary_key=True),
+        sa.Column(name='privilege', type_=sa.BigInteger(), nullable=False, primary_key=True)
     )
     # ROLE <-> ROLE_PRIVILEGES
     op.create_foreign_key(

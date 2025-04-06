@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from utility import TokenHelper
 
 service = FastAPI(
     title='Web-Authentication & Authorization Service',

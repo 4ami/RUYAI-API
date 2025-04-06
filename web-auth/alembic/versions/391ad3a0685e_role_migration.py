@@ -25,13 +25,13 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     cols:list[sa.Column]=[
-        sa.Column(name='_id', type_=sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column(name='_id', type_=sa.BigInteger(), primary_key=True, autoincrement=True),
         sa.Column(name='role', type_=sa.String(35), nullable=False, unique=True)
     ]
 
     op.create_table(
         'ROLE',
-        sa.Column(name='_id', type_=sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column(name='_id', type_=sa.BigInteger(), primary_key=True, autoincrement=True),
         sa.Column(name='role', type_=sa.String(35), nullable=False, unique=True)
     )
 
