@@ -5,8 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from dotenv import load_dotenv
+
 import os
+from dotenv import load_dotenv
 load_dotenv()
 
 # this is the Alembic Config object, which provides
@@ -18,14 +19,14 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-url:str= os.getenv('DB_URL').format(
-    DB_NAME = os.getenv('DB_NAME'),
-    DB_USER = os.getenv('DB_USER'),
-    DB_PASSWORD = os.getenv('DB_PASS'),
-    DB_HOST = os.getenv('DB_HOST')
-)
 
-config.set_main_option("sqlalchemy.url", url)
+url:str=os.getenv('DB_URL').format(
+    DB_USER=os.getenv('DB_USER'),
+    DB_PASSWORD=os.getenv('DB_PASS'),
+    DB_HOST=os.getenv('DB_HOST'),
+    DB_NAME=os.getenv('DB_NAME'),
+)
+config.set_main_option('sqlalchemy.url', url)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -80,7 +81,7 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            version_table="alembic_version_auth",
+            version_table="alembic_version_diagnosis",
         )
 
         with context.begin_transaction():

@@ -1,3 +1,6 @@
 *.pem
 *.env
 **/__pycache__/*
+*.venv
+**/_algorithims/*
+**/_data/*
