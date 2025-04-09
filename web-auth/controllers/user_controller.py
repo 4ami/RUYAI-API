@@ -94,7 +94,7 @@ class UserController:
             )
             return Login200(
                 token=_1,
-                ref_toke=_2
+                ref_token=_2
             )
         except Exception as e:
             print(e)
