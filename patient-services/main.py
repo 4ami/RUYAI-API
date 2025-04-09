@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 app:FastAPI=FastAPI(
     title='Patient Managment Services',
     summary='Service manages patients information',
-    
 )
 
 from fastapi import Query
