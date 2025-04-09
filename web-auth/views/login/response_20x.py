@@ -23,7 +23,7 @@ class Login200(Login20X):
         description='User access token keeps user authenticated in short-term period (Session life-time) and used to navigate through the system and make use of its functionality.',
         examples=['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c']
     )
-    ref_toke:str=Field(
+    ref_token:str=Field(
         ...,
         title='Referesh Token',
         description='Referesh token act like access token except it mainly used to revoke access token when expired. Referesh token typically long-term period.',
