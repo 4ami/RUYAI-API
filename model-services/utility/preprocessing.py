@@ -1,10 +1,15 @@
 import tensorflow as tf
+from enum import Enum
+
+class ModelType(tuple[int,int,int], Enum):
+    DETECTION=(456,456,3)
+    CLASSIFICATION=(380,380,3)
 
 class Preprocessing:
-    def __init__(self):
+    def __init__(self, type_:ModelType):
         self.MEAN = tf.constant([0.485, 0.456, 0.406], dtype=tf.float32)
         self.STD = tf.constant([0.485, 0.456, 0.406], dtype=tf.float32)
-        self.SHAPE:tuple[int, int, int]=(456,456,3)
+        self.SHAPE:tuple[int, int, int]=type_.value
 
     def _load_(self, ref:str, img_type:str):
         img=tf.io.read_file(ref)
@@ -20,8 +25,8 @@ class Preprocessing:
         
 
     @staticmethod
-    def prepare(img_ref:str):
-        preprocessing:Preprocessing=Preprocessing()
+    def prepare(img_ref:str, model_type:ModelType):
+        preprocessing:Preprocessing=Preprocessing(type_=model_type)
         type_:str = img_ref.split('.')[-1]
         image=preprocessing._load_(ref=f'_data/new/{img_ref}', img_type=type_)
         image=image/255.0

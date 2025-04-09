@@ -9,7 +9,7 @@ def validate_oct_middleware(
     )
 ) -> list[UploadFile]:
     allowed:list[str]=['png', 'jpg', 'jpeg']
-    allowed_size:int=500*1000
+    allowed_size:int=800*1000
     for file in octs:
         if file.filename.split('.')[-1] not in allowed:
             raise HTTPException(
