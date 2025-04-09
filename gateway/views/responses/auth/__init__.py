@@ -1,0 +1,2 @@
+from .register_response import AuthRegisterResponse, REGISTER_RESPONSES
+from .login_response import AuthLoginResponse, LOGIN_RESPONSES
