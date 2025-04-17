@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class PatientInformation(BaseModel):
-    _id:str
+    id:int
     first_name:str
     middle_name:str
     last_name:str

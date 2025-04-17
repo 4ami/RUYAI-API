@@ -28,18 +28,8 @@ def upgrade() -> None:
         sa.Column(name='birth_date', type_=sa.DateTime, nullable=False),
         sa.Column(name='gender', type_=sa.Enum('MALE','FEMALE', name='patient_gender_enum'), nullable=False),
         sa.Column(name='medical_history', type_=sa.JSON, nullable=True),
-        sa.Column(name='hospital_id', type_=sa.BigInteger, nullable=False)
+        sa.Column(name='medical_staff_id', type_=sa.BigInteger, nullable=False)
     )
-
-    # op.create_foreign_key(
-    #     constraint_name=None,
-    #     source_table='PATIENT_INFORMATION',
-    #     referent_table='USER',
-    #     local_cols=['hospital_id'],
-    #     remote_cols=['_id'],
-    #     ondelete='CASCADE',
-    #     onupdate='CASCADE'
-    # )
 
 
 def downgrade() -> None:
