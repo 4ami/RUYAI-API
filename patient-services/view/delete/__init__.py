@@ -1,0 +1,2 @@
+from .delete_request import DeletePatientRequest
+from .delete_response import DeleteResponse

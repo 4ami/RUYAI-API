@@ -26,7 +26,7 @@ def upgrade() -> None:
         sa.Column(name='email', type_=sa.String(150), nullable=False, unique=True),
         sa.Column(name='password', type_=sa.String(64), nullable=False),
         sa.Column(name='salt', type_=sa.String(128), nullable=False),
-        sa.Column(name='role', type_=sa.Integer(), nullable=True),
+        sa.Column(name='role', type_=sa.BigInteger(), nullable=True),
         sa.Column(name='locked', type_=sa.Boolean(), nullable=False, default=False),
         sa.Column(name='locked_at', type_=sa.DateTime(), nullable=True),
         sa.Column(name='created_at', type_=sa.DateTime(), nullable=False, server_default=sa.text("timezone('Asia/Riyadh', now())"))
