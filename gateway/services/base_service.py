@@ -26,7 +26,7 @@ class BaseService:
         return await self.client.request(
             method=HttpMethods.PUT.value, 
             endpoint=endpoint,
-            body=data.model_dump_json(exclude=None),
+            body=data.model_dump(exclude_none=True),
             headers=headers
         )
 
@@ -34,7 +34,7 @@ class BaseService:
         return await self.client.request(
             method=HttpMethods.DELETE.value, 
             endpoint=endpoint,
-            body=data.model_dump_json(),
+            body=data.model_dump(),
             headers=headers
         )
     

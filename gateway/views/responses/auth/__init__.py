@@ -1,2 +1,5 @@
 from .register_response import AuthRegisterResponse, REGISTER_RESPONSES
 from .login_response import AuthLoginResponse, LOGIN_RESPONSES
+from .unauthorized_response import UnauthorizedResponse
+from .forbidden_response import ForbiddenResponse
+from .verify_token_response import VerifyTokenResponse

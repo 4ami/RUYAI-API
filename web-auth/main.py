@@ -10,7 +10,8 @@ service = FastAPI(
 def ping(): 
     return JSONResponse(content={'message': 'pong', 'health': 'Running', 'code': 200}, status_code=200)
 
-from routes import authentication, security
+from routes import authentication, authorization, security
 
 service.include_router(router=authentication)
 service.include_router(router=security)
+service.include_router(router=authorization)
