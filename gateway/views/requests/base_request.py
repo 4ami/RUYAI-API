@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
 class BaseRequest(BaseModel):
-    pass
+    model_config={"extra":"forbid"}

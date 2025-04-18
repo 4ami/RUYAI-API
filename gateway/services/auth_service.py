@@ -6,7 +6,9 @@ from views import (
     AuthRegisterResponse,
     AuthLoginRequest,
     AuthLoginResponse,
-    AuthLockRequest
+    AuthLockRequest,
+    VerifyTokenRequest,
+    VerifyTokenResponse
 )
 
 from dotenv import load_dotenv
@@ -58,3 +60,18 @@ class AuthService(BaseService):
         return response.json()
 
     async def unlock(self): pass
+
+    async def verify(self, data:VerifyTokenRequest)->VerifyTokenResponse:
+        response=await self.post(endpoint=os.getenv('AUTH_VER'), data=data)
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json)
+        return VerifyTokenResponse(
+            code=json['code'],
+            message=json['message'],
+            valid=json.get('valid'),
+            id=json.get('id'),
+            full_name=json.get('full_name'),
+            role=json.get('role'),
+        )

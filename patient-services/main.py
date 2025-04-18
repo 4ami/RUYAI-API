@@ -10,7 +10,7 @@ from fastapi import Query
 from core import GET_ENGINE
 from sqlalchemy.ext.asyncio import AsyncSession
 
-@app.get('/')
+@app.get('/ping')
 def ping(): return JSONResponse(content={'message': 'pong', 'health': 'Running', 'code': 200}, status_code=200)
 
 from controller import PatientGET, PatientPOST, PatientInfoPUT
