@@ -1,6 +1,7 @@
 from enum import Enum
 import keras
 from .preprocessing import Preprocessing, ModelType
+from model import SevirityDiagnose
 
 class CNN(str, Enum):
     __ROOT__='_algorithims'
@@ -12,11 +13,11 @@ class CNN(str, Enum):
 class ModelManager:
     def __init__(self, architecture:CNN)->None:
         self.model= keras.models.load_model(architecture.value)
-        self.severity:dict[int,str]={
-            0:"Normal",
-            1:"Mild",
-            2:"Moderate",
-            3:"Severe"
+        self.severity:dict[int,SevirityDiagnose]={
+            0:SevirityDiagnose.S0,
+            1:SevirityDiagnose.S1,
+            2:SevirityDiagnose.S2,
+            3:SevirityDiagnose.S3
         }
 
         if self.model is None: raise Exception('Failed to load model')
@@ -29,4 +30,4 @@ class ModelManager:
         return self.model.predict(image)
     
     def map_severity(self, predection:int)->str:
-        return self.severity[predection]
+        return self.severity[predection].value
