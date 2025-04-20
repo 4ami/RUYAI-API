@@ -1,4 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, UploadFile, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.responses import JSONResponse
+from core import GET_ENGINE
+
 diagnosis_router:APIRouter=APIRouter(
     prefix='/diagnose/v1',
     tags=['Diagnosis Model']
@@ -6,46 +10,29 @@ diagnosis_router:APIRouter=APIRouter(
 
 
 
-from fastapi import UploadFile, Depends
 from view import fromData, DiagnoseRequest
-from utility import PathManager, ModelManager, CNN, ModelType
 from middleware import validate_oct_middleware
-from view import Diagnosis200, Diagnosis
-import numpy as np
+from view import Diagnosis200, ServerSideErrorResponse, ResponseBaseModel
+from controller import ImageSetController, DiagnoseReportController
 
 @diagnosis_router.post(
     path='/',
     description='Upload OCT and diagnose it system',
     response_model=Diagnosis200
 )
-def diagnose(
+async def diagnose(
     req:DiagnoseRequest=Depends(fromData),
-    oct:list[UploadFile] = Depends(validate_oct_middleware)
+    oct:list[UploadFile] = Depends(validate_oct_middleware),
+    session:AsyncSession|None=Depends(GET_ENGINE)
 ):
-    #Check staff
-    
-    #Check patient
-
-    #Store
-    imgs=PathManager.store_uploaded(octs=oct)
-
-    #Diagnose
-    model:ModelManager = ModelManager(architecture=CNN.FineTuned_EfficientNetB5_Binary)
-    classification_model:ModelManager = ModelManager(architecture=CNN.FineTuned_Classification_V2B3)
-    THRESHOLD:float=0.50
-    diagnosis:list[Diagnosis] = []
-    for img in imgs:
-        prop= model.classifiy(img=img[0], type_=ModelType.DETECTION)
-        grade= classification_model.classifiy(img=img[0], type_=ModelType.CLASSIFICATION)
-        grade= np.argmax(grade, axis=1)[0]
-        print(grade)
-        d = Diagnosis(
-            image_sent=img[1], 
-            stored_as=img[0], 
-            glaucoma= 'Positive' if prop[0][0] >= THRESHOLD else 'Negative',
-            glaucoma_propability=prop[0][0],
-            threshold_used=THRESHOLD,
-            severity=classification_model.map_severity(grade)
+    report_id:int = await DiagnoseReportController.create_report(data=req, session=session)
+    if not report_id:
+        return JSONResponse(
+            status_code=ServerSideErrorResponse().code,
+            content=ServerSideErrorResponse().model_dump()
         )
-        diagnosis.append(d)
-    return Diagnosis200(diagnosis=diagnosis)
+    response:ResponseBaseModel= await ImageSetController.add(report_id=report_id, octs=oct, session=session)
+    return JSONResponse(
+        status_code=response.code,
+        content=response.model_dump(exclude_none=True)
+    )

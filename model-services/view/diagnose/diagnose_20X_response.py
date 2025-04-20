@@ -16,6 +16,11 @@ class Diagnosis200(Diagnosis20X):
         title='Response Message',
         description='Message associated with response'
     )
+    report_id:int=Field(
+        ...,
+        title='Report Id',
+        description='The stored report that the diagnose belongs to.'
+    )
     diagnosis:list[Diagnosis]=Field(
         ...,
         title='List of Diagnosed Images and Thier Results',
