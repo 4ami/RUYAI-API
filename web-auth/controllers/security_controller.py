@@ -4,6 +4,8 @@ from sqlalchemy.future import select
 
 from models import UserModel
 
+from utility import MailUtil
+
 from views import (
     LockRequest,
     LockBaseResponse,
@@ -49,6 +51,8 @@ class SecurityController:
 
             _usr.locked=True
             await session.commit()
+            mailutil:MailUtil = MailUtil()
+            await mailutil.send_unlock(to=_usr.email, link='http://localhost:8000/')
             return Lock200()
         except Exception as e:
             print(e)

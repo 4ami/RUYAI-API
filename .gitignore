@@ -4,3 +4,4 @@
 *.venv
 **/_algorithims/*
 **/_data/*
+*.cred

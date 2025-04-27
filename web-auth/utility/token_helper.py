@@ -7,7 +7,9 @@ class TokenHelper:
     @staticmethod
     def user_pair_tokens(payload:dict)->tuple[str,str]:
         payload['iss']='Ruy\'AI'
-        payload['exp']= datetime.now(timezone.utc)+timedelta(hours=1, minutes=30)
+        # payload['exp']= datetime.now(timezone.utc)+timedelta(hours=1, minutes=30)
+        # TODO: Remove after presentation
+        payload['exp']= datetime.now(timezone.utc)+timedelta(days=1)
         
         token:str=jwt.encode(
             payload=payload, 

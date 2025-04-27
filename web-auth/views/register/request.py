@@ -22,6 +22,12 @@ class RegisterRequest(BaseModel):
         examples=['Secr3t_Pa$sw0rD'],
         strict=True
     )
+    role:int=Field(
+        ...,
+        title='Required Role',
+        description='Wanted role to use the system',
+        strict=True
+    )
 
     @field_validator('full_name', mode='before')
     def full_name_validator(cls, value:str)->str:

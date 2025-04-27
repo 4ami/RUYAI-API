@@ -6,9 +6,5 @@
     {"role": 1, "privilege":7},
 
     {"role": 2, "privilege":3},
-    {"role": 2, "privilege":4},
-
-
-    {"role": 3, "privilege":6},
-    {"role": 3, "privilege":7}
+    {"role": 2, "privilege":4}
 ]

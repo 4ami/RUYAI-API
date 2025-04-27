@@ -12,7 +12,7 @@ images_router:APIRouter = APIRouter(
 )
 
 @images_router.get(
-    path='staff/{sid}/image/{image}',
+    path='/staff/{sid}/image/{image}',
     status_code=200,
 )
 async def get_image(

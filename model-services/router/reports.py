@@ -22,20 +22,20 @@ async def getAll(
     page:int=Query(1, title='Page number', description='Returns reports in that page' ,ge=1),
     session:AsyncSession|None=Depends(GET_ENGINE)
 )->ResponseBaseModel:
-    rm:list[ReportMetadata] = await DiagnoseReportController.getAll(id=id, page=page, session=session)
+    rm = await DiagnoseReportController.getAll(id=id, page=page, session=session)
     nfr=StaffReportsResponse(code=404, message='No reports found')
-    if not rm:
+    if not rm[0]:
         return JSONResponse(status_code=nfr.code, content=nfr.model_dump(exclude_none=True))
     
     rdm:list[ReportDiagnosisMetadata]= []
 
-    for r in rm:
+    for r in rm[0]:
         dm:list[DiagnoseMetadata] = await ImageSetController.getAll(rmd=r, session=session)
         if not dm:
             return JSONResponse(status_code=nfr.code, content=nfr.model_dump(exclude_none=True))
         rdm.append(ReportDiagnosisMetadata(**r.model_dump(), diagnosis=dm))
     
-    return StaffReportsResponse(code=200, message='Found Reports successfully', reports=rdm)
+    return StaffReportsResponse(code=200, message='Found Reports successfully', reports=rdm, total_pages=rm[1])
 
 
 from view import CompleteDiagnose, FullReportResponse, FullReportData
@@ -50,7 +50,7 @@ async def getOne(
     pid:int,
     session:AsyncSession|None=Depends(GET_ENGINE)
 )->ResponseBaseModel:
-    nfr:ResponseBaseModel= ResponseBaseModel(code=404, message='No Report Fount')
+    nfr:ResponseBaseModel= ResponseBaseModel(code=404, message='No Report Found')
     rmd:ReportMetadata = await DiagnoseReportController.getOne(rid=rid, sid=sid, pid=pid, session=session)
 
     if not rmd:

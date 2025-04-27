@@ -12,3 +12,9 @@ class HashHelper:
         salt_bytes:bytes=bytes.fromhex(salt)
         password=hashlib.sha256((salt_bytes+password.encode())).hexdigest()
         return hashed==password
+    
+    @staticmethod
+    def hash_with_salt(password:str, salt:str)->str:
+        salt_bytes:bytes = bytes.fromhex(salt)
+        hashed:str= hashlib.sha256((salt_bytes+password.encode())).hexdigest()
+        return hashed

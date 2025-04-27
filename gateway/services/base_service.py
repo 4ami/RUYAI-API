@@ -1,6 +1,7 @@
 from utility import HTTPClient, HttpMethods
 from typing import Optional, Any, Dict
 from views import BaseRequest
+from fastapi import UploadFile
 
 class BaseService:
     def __init__(self, service:str):
@@ -38,3 +39,17 @@ class BaseService:
             headers=headers
         )
     
+    async def post_multipart(
+        self,
+        endpoint:str,
+        fields:Dict[str, Any],
+        files:list[tuple[str, UploadFile]],
+        headers:Optional[Dict[str, str]]=None
+    ):
+        return await self.client.multipart(
+            method=HttpMethods.POST.value,
+            endpoint=endpoint,
+            fields=fields,
+            files=files,
+            headers=headers
+        )

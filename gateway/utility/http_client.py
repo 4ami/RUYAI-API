@@ -1,7 +1,7 @@
 import httpx
 from enum import Enum
 from typing import Optional, Dict, Any
-
+from fastapi import UploadFile
 
 class HttpMethods(str, Enum):
     GET='GET'
@@ -29,5 +29,30 @@ class HTTPClient:
             json=body,
             headers=headers
         )
-        # response.raise_for_status()
         return response
+    
+    async def multipart(
+        self,
+        method:str,
+        endpoint:str,
+        fields:Dict[str, Any],
+        files:list[tuple[str, UploadFile]],
+        headers: Optional[Dict[str, str]] = None
+    )-> httpx.Response:
+        prep_files: list[tuple[str, tuple[str, bytes, str]]]=[]
+
+        for field_name, upload_file in files:
+            content=await upload_file.read()
+            prep_files.append(
+                (field_name,
+                (upload_file.filename, content, upload_file.content_type))
+            )
+        
+        return await self.client.request(
+            method=method,
+            url=endpoint,
+            data=fields,
+            files=prep_files,
+            headers=headers,
+            timeout=httpx.Timeout(60)
+        )

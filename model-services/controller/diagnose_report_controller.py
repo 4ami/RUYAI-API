@@ -3,6 +3,8 @@ from sqlalchemy.engine import Result
 from view import DiagnoseRequest, ReportMetadata
 from model import DiagnoseReportModel
 from sqlalchemy.future import select
+from sqlalchemy import func, distinct
+from datetime import date
 
 class DiagnoseReportController:
     @staticmethod
@@ -30,7 +32,7 @@ class DiagnoseReportController:
         id:int,
         page:int,
         session:AsyncSession|None
-    )->list[ReportMetadata] | None:
+    )->tuple[list[ReportMetadata] | None, int | None]:
         try:
             if not session: raise Exception('Session is not initialized!')
             if not id: raise Exception('Missing ID')
@@ -45,7 +47,16 @@ class DiagnoseReportController:
 
             res:Result=await session.execute(stmt)
             data:list[DiagnoseReportModel] = res.scalars().all()
-            if not data: return None
+            if not data: return None, None
+
+            count=select(func.count()).select_from(DiagnoseReportModel).where(
+                DiagnoseReportModel.request_by == id
+            )
+
+            count_res:Result=await session.execute(count)
+            total= count_res.scalar_one_or_none()
+            if not total: total = 0
+            total= max((total + limit-1)//limit, 1)
 
             return [
                 ReportMetadata(
@@ -55,7 +66,7 @@ class DiagnoseReportController:
                     created_at=r.created_at
                 )
                 for r in data
-            ]
+            ], total
         except Exception as e:
             print(f'DiagnoseReportController Exception:\n{e}')
             return None
@@ -114,3 +125,118 @@ class DiagnoseReportController:
         except Exception as e:
             print(f'DiagnoseReportController Exception:\n{e}')
             return False
+        
+    @staticmethod
+    async def update_approval_status(
+        approval_status:str,
+        report_id:int,
+        staff:int,
+        session: AsyncSession | None        
+    )->tuple[bool, str|None]:
+        try:
+            if not session: raise Exception('Session is not initialized!')
+            
+            stmt=select(DiagnoseReportModel).where(
+                (DiagnoseReportModel._id == report_id) &
+                (DiagnoseReportModel.request_by == staff)
+            )
+            res:Result=await session.execute(stmt)
+            report:DiagnoseReportModel=res.scalar_one_or_none()
+            if not report: raise Exception('Report not found')
+
+            report.approval_status=approval_status
+            return True, None
+        except Exception as e:
+            print(f'DiagnoseReportController Exception:\n{e}')
+            return False, e.__str__()
+    
+    @staticmethod
+    async def all_staff_reports_ids(
+        sid:int,
+        session: AsyncSession | None   
+    )->list[int] | None:
+        try:
+            if not session: raise Exception('Session is not initialized!')
+            if not sid : raise Exception('Missing ID')
+
+            stmt=select(DiagnoseReportModel._id).where(DiagnoseReportModel.request_by==sid)
+            res:Result = await session.execute(stmt)
+
+            data:list[int]=res.scalars().all()
+            if not data: return None
+            return data
+        except Exception as e:
+            print(f'DiagnoseReportController Exception:\n{e}')
+            return None
+        
+    @staticmethod
+    async def count_pending(
+        sid:int,
+        session: AsyncSession | None 
+    )->  int | None:
+        try:
+            if not session: raise Exception('Session is not initialized!')
+            if not sid : raise Exception('Missing ID')
+
+            stmt=select(func.count()).where(
+                (DiagnoseReportModel.request_by==sid) &
+                (DiagnoseReportModel.approval_status=="PENDING")
+            )
+
+            res:Result=await session.execute(stmt)
+            pendings:int=res.scalar_one_or_none()
+            if not pendings: pendings=0
+
+            return pendings
+        except Exception as e:
+            print(f'DiagnoseReportController Exception:\n{e}')
+            return None
+        
+    @staticmethod
+    async def all_staff_reviewd_reprots(
+        sid:int,
+        session: AsyncSession | None   
+    )->list[int] | None:
+        try:
+            if not session: raise Exception('Session is not initialized!')
+            if not sid : raise Exception('Missing ID')
+
+            stmt=select(DiagnoseReportModel._id).where(
+                (DiagnoseReportModel.request_by == sid)&
+                (DiagnoseReportModel.approval_status.in_(["APPROVED", "REJECTED"]))
+            )
+            res:Result= await session.execute(stmt)
+            reviewed:list[int]= res.scalars().all()
+            print(reviewed)
+            if not reviewed: return None
+            return reviewed
+        except Exception as e:
+            print(f'DiagnoseReportController Exception:\n{e}')
+            return None
+        
+    @staticmethod
+    async def recently_diagnosed(
+        sid:int,
+        session: AsyncSession | None   
+    )->list[tuple[int, int]]| None:
+        try:
+            if not session: raise Exception('Session is not initialized!')
+            if not sid : raise Exception('Missing ID')
+
+            stmt=select(
+                distinct(DiagnoseReportModel.belongs_to),
+                DiagnoseReportModel._id
+            ).where(
+                (DiagnoseReportModel.request_by == sid)&
+                (DiagnoseReportModel.created_at == date.today())
+            ).order_by(
+                DiagnoseReportModel._id.desc()
+            ).limit(2)
+
+            res:Result = await session.execute(stmt)
+            recent:list[tuple[int, int]] = res.all()
+            if not recent: return None
+            return recent
+        except Exception as e:
+            print(f'DiagnoseReportController Exception:\n{e}')
+            return None

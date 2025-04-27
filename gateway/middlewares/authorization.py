@@ -11,15 +11,20 @@ from services import AuthService
 import re
 
 class AuthorizationMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, protect:list[str]=[]):
+    def __init__(self, app, protect:list[str]=[], skip:list[str]=[]):
         super().__init__(app)
         self.protect:list[str]= protect
+        self.skip:list[str]=skip
         self.__AUTHORIZATION__:AuthService=AuthService()
 
     async def dispatch(self, request, call_next):
         try:
             #pre-flight request
             if request.method == "OPTIONS":
+                return await call_next(request)
+            
+            #if skipped
+            if request.url.path in self.skip:
                 return await call_next(request)
 
             #not protected

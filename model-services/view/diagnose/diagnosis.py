@@ -25,7 +25,7 @@ class Diagnosis(BaseModel):
         examples=[0.3512, 0.99123]
     )
     threshold_used:float=Field(
-        0.7,
+        0.5,
         title='Threshold',
         description='Threshold used to detrmine positive or negative class for the predicted value'
     )

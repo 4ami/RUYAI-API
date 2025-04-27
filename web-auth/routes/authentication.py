@@ -57,3 +57,37 @@ async def login_endpoint(
     if not isinstance(response, Login200):
         return JSONResponse(status_code=response.code, content=response.model_dump())
     return response
+
+from views import ForgetPasswordRequest, ForgetPasswordBaseResponse
+@authentication.post(
+    path='/forget-password',
+    status_code=200,
+    response_model=ForgetPasswordBaseResponse
+)
+async def forget_password(
+    req:ForgetPasswordRequest,
+    session:AsyncSession | None=Depends(GET_ENGINE)
+):
+    res = await UserController.forget_password(data=req, session=session)
+    return JSONResponse(
+        status_code=res.code,
+        content=res.model_dump(exclude_none=True)
+    )
+
+
+from views import ResetPasswordRequest, ResetPasswordResponse
+@authentication.post(
+    path='/reset/{token}',
+    response_model=ResetPasswordResponse,
+    status_code=200
+)
+async def reset_password(
+    token:str,
+    req:ResetPasswordRequest,
+    session:AsyncSession | None=Depends(GET_ENGINE)
+):
+    res = await UserController.reset_password(token=token, data=req, session=session)
+    return JSONResponse(
+        status_code=res.code,
+        content=res.model_dump(exclude_none=True)
+    )

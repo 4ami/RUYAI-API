@@ -27,6 +27,7 @@ def upgrade() -> None:
         sa.Column(name='password', type_=sa.String(64), nullable=False),
         sa.Column(name='salt', type_=sa.String(128), nullable=False),
         sa.Column(name='role', type_=sa.BigInteger(), nullable=True),
+        sa.Column(name='account_status', type_=sa.Enum('PENDING', 'ACTIVE', 'DISABLED', name='account_status'), nullable=False, default='PENDING'),
         sa.Column(name='locked', type_=sa.Boolean(), nullable=False, default=False),
         sa.Column(name='locked_at', type_=sa.DateTime(), nullable=True),
         sa.Column(name='created_at', type_=sa.DateTime(), nullable=False, server_default=sa.text("timezone('Asia/Riyadh', now())"))
