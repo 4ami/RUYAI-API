@@ -19,7 +19,7 @@ class LockRequest(BaseModel):
 
     @model_validator(mode='before')
     def at_least_one(cls, values):
-        if type(json) is not str:
+        if isinstance(values, str):
             values=json.loads(values)
 
         email, account_id=values.get('email'), values.get('account_id')

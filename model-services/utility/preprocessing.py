@@ -1,5 +1,7 @@
 import tensorflow as tf
 from enum import Enum
+import cv2
+import keras
 
 class ModelType(tuple[int,int,int], Enum):
     DETECTION=(300,300,3)
@@ -22,14 +24,25 @@ class Preprocessing:
         img=tf.image.resize(img, size=[self.SHAPE[0],self.SHAPE[1]])
         img=tf.image.convert_image_dtype(image=img, dtype=tf.float32)
         return img
-        
+    
+    def _severity_preprocessing_(self, ref:str):
+        image = cv2.imread(ref)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = cv2.resize(image, (self.SHAPE[0], self.SHAPE[1]))
+        image = image.astype('float32')
+        image = keras.applications.efficientnet_v2.preprocess_input(image)
+        image = tf.expand_dims(image, axis=0)
+        return image
 
     @staticmethod
     def prepare(img_ref:str, model_type:ModelType):
         preprocessing:Preprocessing=Preprocessing(type_=model_type)
         type_:str = img_ref.split('.')[-1]
-        image=preprocessing._load_(ref=f'_data/{img_ref}', img_type=type_)
-        image=image/255.0
-        image=(image-preprocessing.MEAN)/preprocessing.STD
-        image=tf.expand_dims(image, axis=0)
-        return image
+        if model_type == ModelType.DETECTION:
+            image=preprocessing._load_(ref=f'_data/{img_ref}', img_type=type_)
+            image=image/255.0
+            image=(image-preprocessing.MEAN)/preprocessing.STD
+            image=tf.expand_dims(image, axis=0)
+            return image
+        else:
+            return preprocessing._severity_preprocessing_(ref=f'_data/{img_ref}')

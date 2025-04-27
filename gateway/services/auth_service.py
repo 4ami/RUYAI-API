@@ -8,7 +8,14 @@ from views import (
     AuthLoginResponse,
     AuthLockRequest,
     VerifyTokenRequest,
-    VerifyTokenResponse
+    VerifyTokenResponse,
+    ForgetPasswordRequest,
+    ResetPasswordRequest,
+    AvailableRoles,
+    PendingAccountsResponse,
+    UpdatedUserInformationByAdmin,
+    UpdateUserByAdminRequest,
+    UnLockRequest
 )
 
 from dotenv import load_dotenv
@@ -36,7 +43,7 @@ class AuthService(BaseService):
         json=response.json()
         if response.status_code == 422:
             from fastapi.exceptions import HTTPException
-            raise HTTPException(status_code=response.status_code, detail=json)
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
         return AuthRegisterResponse(code=json['code'], message=json['message'])
     
     async def login(self, data:AuthLoginRequest) -> BaseResponse:
@@ -44,7 +51,7 @@ class AuthService(BaseService):
         json=response.json()
         if response.status_code == 422:
             from fastapi.exceptions import HTTPException
-            raise HTTPException(status_code=response.status_code, detail=json)
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
         return AuthLoginResponse(
             code=json['code'],
             message=json['message'],
@@ -55,18 +62,23 @@ class AuthService(BaseService):
         )
     
     async def lock(self, data:AuthLockRequest):
-        print(data)
         response=await self.put(endpoint=os.getenv('AUTH_SEC_LOCK'), data=data)
         return response.json()
 
-    async def unlock(self): pass
+    async def unlock(self, data:UnLockRequest):
+        response=await self.put(endpoint=os.getenv('AUTH_SEC_UNLOCK'), data=data)
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
+        return BaseResponse(**json)
 
     async def verify(self, data:VerifyTokenRequest)->VerifyTokenResponse:
         response=await self.post(endpoint=os.getenv('AUTH_VER'), data=data)
         json=response.json()
         if response.status_code == 422:
             from fastapi.exceptions import HTTPException
-            raise HTTPException(status_code=response.status_code, detail=json)
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
         return VerifyTokenResponse(
             code=json['code'],
             message=json['message'],
@@ -75,3 +87,48 @@ class AuthService(BaseService):
             full_name=json.get('full_name'),
             role=json.get('role'),
         )
+    
+    async def forget_password(self, data:ForgetPasswordRequest)->BaseResponse:
+        response = await self.post(endpoint=os.getenv('AUTH_FOG'), data=data)
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
+        return BaseResponse(**json)
+    
+    async def reset_password(self, data:ResetPasswordRequest, token:str)->BaseResponse:
+        endpoint:str = os.getenv('AUTH_RES').format(token=token)
+        response=await self.post(endpoint=endpoint, data=data)
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
+        return BaseResponse(**json)
+    
+    async def get_roles(self):
+        response=await self.get(endpoint=os.getenv('METADATA_ROLES'))
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
+        return AvailableRoles(**json)
+    
+    async def is_admin(self, id:int):
+        endpoint:str=os.getenv('AUTH_ADM').format(id=id)
+        response=await self.get(endpoint=endpoint)
+        json=response.json()
+        return BaseResponse(**json)
+    
+    async def get_pendings(self):
+        response=await self.get(endpoint=os.getenv('ADMIN_GET_PENDINGS'))
+        json=response.json()
+        return PendingAccountsResponse(**json)
+    
+    async def admin_put_user(self, data:UpdateUserByAdminRequest):
+        endpoint:str=os.getenv('ADMIN_PUT_USER')
+        response=await self.put(endpoint=endpoint, data=data)
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
+        return UpdatedUserInformationByAdmin(**json)

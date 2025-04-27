@@ -1,15 +1,15 @@
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse, FileResponse
 from middlewares import(
     limiter, 
     rate_limit_handler, 
     ServerErrorMiddlewareHandler,
-    AuthorizationMiddleware
+    AuthorizationMiddleware,
 )
 from slowapi.middleware import SlowAPIMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 
-from utility import PROTECTED
+from utility import PROTECTED, SKIPPED
 
 gateway:FastAPI=FastAPI(
     title='Ruy\'AI API Gateway',
@@ -25,13 +25,16 @@ gateway.add_middleware(
 )
 
 gateway.add_middleware(ServerErrorMiddlewareHandler)
-gateway.add_middleware(AuthorizationMiddleware, protect=PROTECTED)
+gateway.add_middleware(AuthorizationMiddleware, protect=PROTECTED, skip=SKIPPED)
 
 gateway.state.limiter=limiter
 gateway.add_middleware(SlowAPIMiddleware)
 gateway.add_exception_handler(429, rate_limit_handler)
 
-# gateway.add_middleware(AuthorizationMiddleware, protect=['/gateway/ping'])
+@gateway.exception_handler(HTTPException)
+async def custom_http_exception(req:Request, ex:HTTPException):
+    return JSONResponse(status_code=ex.status_code, content=ex.detail)
+
 @gateway.get(
     '/ping',
     description='Health check',
@@ -41,7 +44,27 @@ gateway.add_exception_handler(429, rate_limit_handler)
 def ping(): 
     return JSONResponse(content={'message': 'pong', 'health': 'Running', 'code': 200})
 
-from routes import auth_router, patient_router
+@gateway.get(
+    path='/public/images/{resource}',
+    description='Get Public Resource',
+    status_code=200,
+    tags=['Default Gateway Endpoint']
+)
+async def get_resource(resource:str):
+    return FileResponse(path=f'static/public/images/{resource}', media_type='image/png')
+
+
+from routes import auth_router, patient_router, model_router, reports_router, feedback_router, metadata_router, admin_router
 gateway.include_router(router=auth_router)
 
 gateway.include_router(router=patient_router)
+
+gateway.include_router(router=model_router)
+
+gateway.include_router(router=reports_router)
+
+gateway.include_router(router=feedback_router)
+
+gateway.include_router(router=metadata_router)
+
+gateway.include_router(router=admin_router)

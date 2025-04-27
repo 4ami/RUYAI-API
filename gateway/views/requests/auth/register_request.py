@@ -23,3 +23,9 @@ class AuthRegisterRequest(BaseRequest):
         examples=['Secr3t_Pa$sw0rD'],
         strict=True
     )
+    role:int=Field(
+        ...,
+        title='Required Role',
+        description='Wanted role to use the system',
+        strict=True
+    )

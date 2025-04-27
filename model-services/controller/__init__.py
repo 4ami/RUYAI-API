@@ -1,2 +1,3 @@
 from .diagnose_report_controller import DiagnoseReportController
 from .image_set_controller import ImageSetController
+from .feedback_controller import FeedbackController

@@ -66,8 +66,7 @@ class PatientService(BaseService):
             json=res.json()
             if res.status_code == 422:
                 from fastapi.exceptions import HTTPException
-                raise HTTPException(status_code=res.status_code, detail=json)
-
+                raise HTTPException(status_code=res.status_code, detail=json['detail'])
             patients= json.get('patients', [])
             patients= [PatientInformation(**p) for p in patients]
             return GetAllPatientResponse(
@@ -77,6 +76,7 @@ class PatientService(BaseService):
             )
         except Exception as e:
             print(f'Patient service exception:\n{e}')
+            if isinstance(e, HTTPException):raise e
             return ServerSideErrorResponse()
 
     async def getOne(self, mid:int, pid:int)->BaseResponse:
@@ -87,7 +87,7 @@ class PatientService(BaseService):
             json=res.json()
             if res.status_code == 422:
                 from fastapi.exceptions import HTTPException
-                raise HTTPException(status_code=res.status_code, detail=json)
+                raise HTTPException(status_code=res.status_code, detail=json['detail'])
             return GetOnePatientResponse(
                 code=json.get('code'),
                 message=json.get('message'),
@@ -95,6 +95,7 @@ class PatientService(BaseService):
             )
         except Exception as e:
             print(f'Patient service exception:\n{e}')
+            if isinstance(e, HTTPException):raise e
             return ServerSideErrorResponse()
         
     async def create(
@@ -110,7 +111,7 @@ class PatientService(BaseService):
             json=res.json()
             if res.status_code == 422:
                 from fastapi.exceptions import HTTPException
-                raise HTTPException(status_code=res.status_code, detail=json)
+                raise HTTPException(status_code=res.status_code, detail=json['detail'])
             return CreatePatientResponse(
                 code=json.get('code'),
                 message=json.get('message'),
@@ -118,6 +119,7 @@ class PatientService(BaseService):
             )
         except Exception as e:
             print(f'Patient service exception:\n{e}')
+            if isinstance(e, HTTPException):raise e
             return ServerSideErrorResponse()
         
     async def update(
@@ -133,10 +135,11 @@ class PatientService(BaseService):
             json=res.json()            
             if res.status_code == 422:
                 from fastapi.exceptions import HTTPException
-                raise HTTPException(status_code=res.status_code, detail=json)
+                raise HTTPException(status_code=res.status_code, detail=json['detail'])
             return UpdatePtaitenResponse(**json)
         except Exception as e:
             print(f'Patient service exception:\n{e}')
+            if isinstance(e, HTTPException):raise e
             return ServerSideErrorResponse()
         
     async def deletePatient(
@@ -152,8 +155,9 @@ class PatientService(BaseService):
             json=res.json()            
             if res.status_code == 422:
                 from fastapi.exceptions import HTTPException
-                raise HTTPException(status_code=res.status_code, detail=json)
+                raise HTTPException(status_code=res.status_code, detail=json['detail'])
             return DeletePatientResponse(**json)
         except Exception as e:
             print(f'Patient service exception:\n{e}')
+            if isinstance(e, HTTPException):raise e
             return ServerSideErrorResponse()

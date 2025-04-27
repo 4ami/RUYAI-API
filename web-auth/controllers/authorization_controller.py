@@ -21,5 +21,5 @@ class AuthorizationController:
             valid=isValid,
             id=payload.get('_id'),
             full_name=payload.get('full_name'),
-            role=payload.get('role')
+            role=payload.get('role'),
         )

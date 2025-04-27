@@ -1,5 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from core import GET_ENGINE
+from sqlalchemy.ext.asyncio import AsyncSession
 
 authorization:APIRouter=APIRouter(
     prefix='/authorization',
@@ -8,8 +10,8 @@ authorization:APIRouter=APIRouter(
 
 
 
-from views import VerifyTokenRequest, VerifyTokenResponse
-from controllers import AuthorizationController
+from views import VerifyTokenRequest, VerifyTokenResponse, IsAdminResponse
+from controllers import AuthorizationController, RoleController
 @authorization.post(
     path='/verify',
     description='Verify access token.',
@@ -21,4 +23,20 @@ async def verify(req:VerifyTokenRequest)->VerifyTokenResponse:
     return JSONResponse(
         status_code=res.code,
         content=res.model_dump(exclude_none=True)
+    )
+
+@authorization.get(
+    path='/admin/role/{id}',
+    description='Check if this was admin role id',
+    status_code=200
+)
+async def is_admin(id:int, session:AsyncSession|None=Depends(GET_ENGINE)):
+    isAdmin:bool = await RoleController.is_admin(role=id, session=session)
+    res:IsAdminResponse=IsAdminResponse(
+        code=200 if isAdmin else 403,
+        message=f'The given role {'is ADMIN' if isAdmin else 'NOT ADMIN'}'
+    )
+    return JSONResponse(
+        status_code=res.code,
+        content=res.model_dump()
     )

@@ -18,7 +18,8 @@ from controller import ImageSetController, DiagnoseReportController
 @diagnosis_router.post(
     path='/',
     description='Upload OCT and diagnose it system',
-    response_model=Diagnosis200
+    response_model=Diagnosis200,
+    status_code=200
 )
 async def diagnose(
     req:DiagnoseRequest=Depends(fromData),

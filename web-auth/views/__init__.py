@@ -3,3 +3,7 @@ from .login import *
 from .lock import *
 from .unlock import *
 from .authorization import *
+from .role import *
+from .server_side_error import ServerSideErrorResponse
+from .user import *
+from .forget_password import *
