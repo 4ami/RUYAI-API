@@ -1,0 +1,2 @@
+from .put_request import UpdatePatientInfoRequest
+from .put_response import UPDATE_PATIENT_INFO_RESPONSES, UpdatedPatientInfoResponse

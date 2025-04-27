@@ -1,0 +1,5 @@
+from .all_patients import GetAllPatientResponse, GET_ALL_PATIENTS_RES
+from .one_patient import GetOnePatientResponse, GET_PATIENT_INFO_RES
+from .create_patient import CreatePatientResponse, CREATE_PATIENT_RES
+from .update_patient import UpdatePtaitenResponse, UPDATE_PATIENT_RES
+from .delete_patient import DeletePatientResponse, DELETE_PATIENT_RES

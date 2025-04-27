@@ -1,0 +1,10 @@
+[
+    {"role": 1, "privilege":1},
+    {"role": 1, "privilege":2},
+    {"role": 1, "privilege":5},
+    {"role": 1, "privilege":6},
+    {"role": 1, "privilege":7},
+
+    {"role": 2, "privilege":3},
+    {"role": 2, "privilege":4}
+]
