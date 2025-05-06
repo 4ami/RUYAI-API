@@ -22,9 +22,9 @@ def upgrade() -> None:
     op.create_table(
         'PATIENT_INFORMATION',
         sa.Column(name='_id', type_=sa.BigInteger, primary_key=True, autoincrement=True),
-        sa.Column(name='first_name', type_=sa.String, nullable=False),
-        sa.Column(name='middle_name', type_=sa.String, nullable=False),
-        sa.Column(name='last_name', type_=sa.String, nullable=False),
+        sa.Column(name='first_name', type_=sa.String(75), nullable=False),
+        sa.Column(name='middle_name', type_=sa.String(75), nullable=False),
+        sa.Column(name='last_name', type_=sa.String(75), nullable=False),
         sa.Column(name='birth_date', type_=sa.DateTime, nullable=False),
         sa.Column(name='gender', type_=sa.Enum('MALE','FEMALE', name='patient_gender_enum'), nullable=False),
         sa.Column(name='medical_history', type_=sa.JSON, nullable=True),

@@ -27,7 +27,8 @@ class HTTPClient:
             url=endpoint,
             params=params,
             json=body,
-            headers=headers
+            headers=headers,
+            timeout=httpx.Timeout(60)
         )
         return response
     

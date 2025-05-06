@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column(name='belongs_to', type_=sa.BigInteger, nullable=False),
         sa.Column(name='request_by', type_=sa.BigInteger, nullable=False),
         sa.Column(name='approval_status', type_=sa.Enum('PENDING', 'APPROVED', 'REJECTED', name='approval_status'), nullable=False, server_default='PENDING'),
-        sa.Column(name='created_at', type_=sa.DATE, nullable=False, server_default=sa.text("timezone('Asia/Riyadh', now())"))
+        sa.Column(name='created_at', type_=sa.DATE, nullable=False, server_default=sa.text("CURRENT_TIMESTAMP"))
     )
 
 

@@ -18,8 +18,10 @@ _engine:AsyncEngine=create_async_engine(
     pool_size=10,
     max_overflow=5,
     pool_timeout=30,
-    pool_recycle=1800,
-    echo=True
+    pool_recycle=60,
+    pool_pre_ping=True, 
+    future=True,
+    echo=False 
 )
 
 _AsyncSession=sessionmaker(

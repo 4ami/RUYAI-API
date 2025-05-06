@@ -9,4 +9,4 @@ class DiagnoseReportModel(BaseModel):
     belongs_to:Mapped[int]=mapped_column(BigInteger, nullable=False)
     request_by:Mapped[int]=mapped_column(BigInteger, nullable=False)
     approval_status:Mapped[str]=mapped_column(Enum('PENDING', 'APPROVED', 'REJECTED', name='approval_status'), nullable=False, server_default='PENDING')
-    created_at:Mapped[date]=mapped_column(DATE, nullable=False, server_default=text("timezone('Asia/Riyadh', now())"))
+    created_at:Mapped[date]=mapped_column(DATE, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
