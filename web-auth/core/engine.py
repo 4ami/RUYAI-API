@@ -14,11 +14,12 @@ url:str=os.getenv('DB_ENGINE').format(
 
 _engine:AsyncEngine=create_async_engine(
     url=url,
-    pool_size=10,
-    max_overflow=5,
-    pool_timeout=30,
-    pool_recycle=1800,
-    echo=True        # Logging excuted queries // Disable in production
+    # pool_size=10,
+    # max_overflow=5,
+    # pool_timeout=30,
+    # pool_recycle=1800,
+    future=True,
+    echo=False        # Logging excuted queries // Disable in production
 )
 
 _AsyncSession=sessionmaker(

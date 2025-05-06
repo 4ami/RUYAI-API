@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column(name='account_status', type_=sa.Enum('PENDING', 'ACTIVE', 'DISABLED', name='account_status'), nullable=False, default='PENDING'),
         sa.Column(name='locked', type_=sa.Boolean(), nullable=False, default=False),
         sa.Column(name='locked_at', type_=sa.DateTime(), nullable=True),
-        sa.Column(name='created_at', type_=sa.DateTime(), nullable=False, server_default=sa.text("timezone('Asia/Riyadh', now())"))
+        sa.Column(name='created_at', type_=sa.DateTime(), nullable=False, server_default=sa.text("CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh')"))
     )
 
     op.create_foreign_key(
@@ -44,24 +44,17 @@ def upgrade() -> None:
     )
 
     op.execute("""
-    CREATE FUNCTION update_locked_at() RETURNS TRIGGER AS $$
+    CREATE TRIGGER set_locked_at
+    BEFORE UPDATE ON `USER`
+    FOR EACH ROW
     BEGIN
         IF NEW.locked = TRUE AND OLD.locked = FALSE THEN
-            NEW.locked_at = timezone('Asia/Riyadh', now());
+            SET NEW.locked_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh');
         END IF;
-        RETURN NEW;
     END;
-    $$ LANGUAGE plpgsql;
-    
-    CREATE TRIGGER set_locked_at
-    BEFORE UPDATE ON "USER"
-    FOR EACH ROW
-    WHEN (NEW.locked = TRUE AND OLD.locked = FALSE)
-    EXECUTE FUNCTION update_locked_at();
     """)
 
 
 def downgrade() -> None:
-    op.execute("DROP TRIGGER IF EXISTS set_locked_at ON \"USER\";")
-    op.execute("DROP FUNCTION IF EXISTS update_locked_at;")
+    op.execute("DROP TRIGGER IF EXISTS set_locked_at;")
     op.drop_table('USER')

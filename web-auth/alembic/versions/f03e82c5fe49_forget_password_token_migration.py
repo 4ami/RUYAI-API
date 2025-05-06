@@ -22,10 +22,10 @@ def upgrade() -> None:
     op.create_table(
         'FORGET_PASSWORD_TOKEN',
         sa.Column(name='_id', type_=sa.BigInteger, primary_key=True, autoincrement=True),
-        sa.Column(name='email', type_=sa.String, nullable=False, index=True),
-        sa.Column(name='token', type_=sa.String, unique=True, index=True),
+        sa.Column(name='email', type_=sa.String(255), nullable=False, index=True),
+        sa.Column(name='token', type_=sa.String(255), unique=True, index=True),
         sa.Column(name='exp', type_=sa.DateTime, nullable=False),
-        sa.Column(name='created_at', type_=sa.DateTime, nullable=False, server_default=sa.text("timezone('Asia/Riyadh', now())"))
+        sa.Column(name='created_at', type_=sa.DateTime, nullable=False, server_default=sa.text("CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh')"))
     )
 
 

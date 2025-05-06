@@ -44,7 +44,7 @@ class UserController:
     )->RegisterResponseBase:
         try:
             # session is not resolved correctly
-            if session is None: raise Exception()
+            if session is None: raise Exception('Session is not Initialized')
 
             _select=select(UserModel.email).where(UserModel.email==user.email)
             _select_res:Result= await session.execute(_select)
@@ -84,7 +84,7 @@ class UserController:
     )->LoginResponseBase:
         try:
             # session is not resolved correctly
-            if session is None: raise Exception()
+            if session is None: raise Exception('Session is not Initialized')
 
             # find user by email
             _select=select(UserModel).where(UserModel.email==credentials.email)
@@ -120,6 +120,7 @@ class UserController:
                 payload={
                     '_id': _usr._id,
                     'full_name': _usr.full_name,
+                    'email': _usr.email,
                     'role': _usr.role,
                 }
             )
@@ -137,7 +138,7 @@ class UserController:
         session:AsyncSession | None
     ):
         try:
-            if session is None: raise Exception()
+            if session is None: raise Exception('Session is not Initialized')
             
             stmt=select(UserModel).where(
                 UserModel._id == data.user_id
@@ -211,7 +212,7 @@ class UserController:
         session:AsyncSession | None
     ):
         try:
-            if session is None: raise Exception()
+            if session is None: raise Exception('Session is not Initialized')
 
             stmt = select(UserModel).where(UserModel.email == data.email)
             res:Result = await session.execute(stmt)
@@ -254,7 +255,7 @@ class UserController:
         session:AsyncSession | None
     ):
         try:
-            if session is None: raise Exception()
+            if session is None: raise Exception('Session is not Initialized')
 
             stmt=select(ForgetPasswordTokenModel).where(ForgetPasswordTokenModel.token == token)
             res:Result = await session.execute(stmt)

@@ -15,4 +15,4 @@ class UserModel(BaseModel):
     account_status: Mapped[str] = mapped_column(Enum('PENDING', 'ACTIVE', 'DISABLED', name='account_status'), nullable=False, default='PENDING')
     locked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     locked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, server_default=text("timezone('Asia/Riyadh', now())"))
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, server_default=text("CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh')"))
