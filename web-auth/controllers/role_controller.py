@@ -15,13 +15,10 @@ class RoleController:
             stmt=select(RoleModel).where(
                 RoleModel.role.notilike("%admin%")
             )
-            print('enter')
             res:Result = await session.execute(stmt)
-            print('executed')
 
             roles:list[RoleModel]= res.scalars().all()
             if not roles: return AllowedRolesResponse(code=404, message='No Roles Available')
-            print('not null')
 
             _rols:list[Role] = [Role(id=r._id, role=r.role) for r in roles]
             

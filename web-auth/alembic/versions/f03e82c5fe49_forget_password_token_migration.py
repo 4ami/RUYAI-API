@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column(name='email', type_=sa.String(255), nullable=False, index=True),
         sa.Column(name='token', type_=sa.String(255), unique=True, index=True),
         sa.Column(name='exp', type_=sa.DateTime, nullable=False),
-        sa.Column(name='created_at', type_=sa.DateTime, nullable=False, server_default=sa.text("CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh')"))
+        sa.Column(name='created_at', type_=sa.DateTime, nullable=False, server_default=sa.text('CURRENT_TIMESTAMP'))
     )
 
 

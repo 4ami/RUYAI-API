@@ -30,7 +30,7 @@ def upgrade() -> None:
         sa.Column(name='account_status', type_=sa.Enum('PENDING', 'ACTIVE', 'DISABLED', name='account_status'), nullable=False, default='PENDING'),
         sa.Column(name='locked', type_=sa.Boolean(), nullable=False, default=False),
         sa.Column(name='locked_at', type_=sa.DateTime(), nullable=True),
-        sa.Column(name='created_at', type_=sa.DateTime(), nullable=False, server_default=sa.text("CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh')"))
+        sa.Column(name='created_at', type_=sa.DateTime(), nullable=False, server_default=sa.text("CURRENT_TIMESTAMP"))
     )
 
     op.create_foreign_key(
@@ -49,9 +49,9 @@ def upgrade() -> None:
     FOR EACH ROW
     BEGIN
         IF NEW.locked = TRUE AND OLD.locked = FALSE THEN
-            SET NEW.locked_at = CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh');
+            SET NEW.locked_at = CURRENT_TIMESTAMP;
         END IF;
-    END;
+    END
     """)
 
 

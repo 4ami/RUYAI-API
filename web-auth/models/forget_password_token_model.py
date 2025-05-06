@@ -11,7 +11,7 @@ class ForgetPasswordTokenModel(BaseModel):
     email:Mapped[str]=mapped_column(String, nullable=False, index=True)
     token:Mapped[str]=mapped_column(String, unique=True, index=True)
     exp:Mapped[datetime]=mapped_column(DateTime, nullable=False)
-    created_at:Mapped[datetime]=mapped_column(DateTime, nullable=False, server_default=text("CONVERT_TZ(NOW(), 'UTC', 'Asia/Riyadh')"))
+    created_at:Mapped[datetime]=mapped_column(DateTime, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
 
     def is_expired(self):
         return self.exp < datetime.now()
