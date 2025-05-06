@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from services import FeedbackService
+from services import FeedbackService, ModelService
 from views import BaseResponse, AddFeedbackRequest
 
 feedback_router:APIRouter = APIRouter(
@@ -9,6 +9,7 @@ feedback_router:APIRouter = APIRouter(
 )
 
 __SERVICE__:FeedbackService= FeedbackService()
+__AI__:ModelService = ModelService()
 
 feedback_router.dependencies=[Depends(__SERVICE__.check_service)]
 
@@ -26,4 +27,19 @@ async def add_feedback(
         status_code=res.code,
         content=res.model_dump(exclude_none=True)
     )
-    
+
+from views import StaffReportsResponse
+@feedback_router.get(
+    path='/reports/pendings',
+    status_code=200,
+    response_model=StaffReportsResponse
+)
+async def get_pindings(
+    sid:int=Depends(__AI__.extractMID),
+    page:int=Query(default=1, description='reports page', ge=1)
+)-> BaseResponse:
+    res:BaseResponse = await __AI__.pending_reports(sid=sid, page=page)
+    return JSONResponse(
+        status_code=res.code,
+        content=res.model_dump(exclude_none=True)
+    )

@@ -38,6 +38,33 @@ async def getAll(
     return StaffReportsResponse(code=200, message='Found Reports successfully', reports=rdm, total_pages=rm[1])
 
 
+@reports.get(
+    path='/pendings/{id}',
+    description='All Staff\'s reports',
+    response_model=StaffReportsResponse,
+    status_code=200
+)
+async def get_pendings(
+    id:int,
+    page:int=Query(1, title='Page number', description='Returns reports in that page' ,ge=1),
+    session:AsyncSession|None=Depends(GET_ENGINE)
+)->ResponseBaseModel:
+    rm = await DiagnoseReportController.get_pendings(id=id, page=page, session=session)
+    nfr=StaffReportsResponse(code=404, message='No pending reports found')
+    if not rm[0]:
+        return JSONResponse(status_code=nfr.code, content=nfr.model_dump(exclude_none=True))
+    
+    rdm:list[ReportDiagnosisMetadata]= []
+
+    for r in rm[0]:
+        dm:list[DiagnoseMetadata] = await ImageSetController.getAll(rmd=r, session=session)
+        if not dm:
+            return JSONResponse(status_code=nfr.code, content=nfr.model_dump(exclude_none=True))
+        rdm.append(ReportDiagnosisMetadata(**r.model_dump(), diagnosis=dm))
+    
+    return StaffReportsResponse(code=200, message='Found Reports successfully', reports=rdm, total_pages=rm[1])
+
+
 from view import CompleteDiagnose, FullReportResponse, FullReportData
 @reports.get(
     path='/{rid}/staff/{sid}/patient/{pid}',

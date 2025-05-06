@@ -69,7 +69,7 @@ class DiagnoseReportController:
             ], total
         except Exception as e:
             print(f'DiagnoseReportController Exception:\n{e}')
-            return None
+            return None, None
         
     @staticmethod
     async def getOne(
@@ -240,3 +240,47 @@ class DiagnoseReportController:
         except Exception as e:
             print(f'DiagnoseReportController Exception:\n{e}')
             return None
+        
+    @staticmethod
+    async def get_pendings(
+        id:int,
+        page:int,
+        session:AsyncSession | None 
+    )->tuple[list[ReportMetadata] | None, int | None]:
+        try:
+            if not session: raise Exception('Session is not initialized!')
+            if not id: raise Exception('Missing ID')
+            
+            limit:int=10
+            offset:int=(page-1)*limit
+
+            stmt=select(DiagnoseReportModel).where(
+                (DiagnoseReportModel.request_by == id) &
+                (DiagnoseReportModel.approval_status == "PENDING")
+            ).limit(limit=limit).offset(offset=offset)
+
+            res:Result = await session.execute(stmt)
+            data:list[DiagnoseReportModel] = res.scalars().all()
+
+            count=select(func.count()).select_from(DiagnoseReportModel).where(
+                (DiagnoseReportModel.request_by == id) &
+                (DiagnoseReportModel.approval_status == "PENDING")
+            )
+
+            count_res:Result=await session.execute(count)
+            total= count_res.scalar_one_or_none()
+            if not total: total = 0
+            total= max((total + limit-1)//limit, 1)
+
+            return [
+                ReportMetadata(
+                    report_id= r._id,
+                    patient_id= r.belongs_to,
+                    approval_status= r.approval_status,
+                    created_at=r.created_at
+                )
+                for r in data
+            ], total
+        except Exception as e:
+            print(f'DiagnoseReportController Exception:\n{e}')
+            return None, None

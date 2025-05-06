@@ -112,6 +112,30 @@ class ModelService(BaseService):
                 status_code=ServerSideErrorResponse().code,
                 detail=ServerSideErrorResponse().model_dump()
             )
+        
+    async def pending_reports(
+        self,
+        sid:int,
+        page:int
+    ):
+        try:
+            if not sid: return ForbiddenResponse()
+            endpoint:str=os.getenv('MODEL_PENDING_REPORTS').format(id=sid)
+            res=await self.get(endpoint=endpoint, params={'page': page})
+            json=res.json()
+            
+            if res.status_code == 422:
+                from fastapi.exceptions import HTTPException
+                raise HTTPException(status_code=res.status_code, detail=json['detail'])
+         
+            return StaffReportsResponse(**json)
+        except Exception as e:
+            print(f'Model service exception:\n{e}')
+            if isinstance(e, HTTPException):raise e
+            raise HTTPException(
+                status_code=ServerSideErrorResponse().code,
+                detail=ServerSideErrorResponse().model_dump()
+            )
     
 
     async def get_image(
