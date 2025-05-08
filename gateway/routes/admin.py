@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Query
 from services import AuthService
 from fastapi.responses import JSONResponse
 from views import BaseResponse
@@ -21,6 +21,19 @@ from views import PendingAccountsResponse
 )
 async def get_pendings():
     res = await __AUTH__.get_pendings()
+    return JSONResponse(
+        status_code=res.code,
+        content=res.model_dump(exclude_none=True)
+    )
+
+from views import UserAccountsResponse
+@admin_router.get(
+    path='/accounts',
+    status_code=200,
+    response_model=UserAccountsResponse
+)
+async def get_accounts(page:int=Query(1, ge=1)):
+    res = await __AUTH__.get_users(page=page)
     return JSONResponse(
         status_code=res.code,
         content=res.model_dump(exclude_none=True)

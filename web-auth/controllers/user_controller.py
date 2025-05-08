@@ -1,5 +1,6 @@
 from sqlalchemy.engine import Result
 from sqlalchemy.future import select
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from .role_controller import RoleController
 
@@ -32,7 +33,8 @@ from views import (
     ForgetPasswordRequest,
     ForgetPasswordResponse,
     ResetPasswordRequest,
-    ResetPasswordResponse
+    ResetPasswordResponse,
+    UserAccountsResponse
 )
 
 
@@ -202,6 +204,55 @@ class UserController:
                     )
                 )
             return PendingAccountsResponse(code=200, message='Pending Accounts Gathered', pending_accounts=accounts)
+        except Exception as e:
+            print(f'User Controller Exception:\n{e}')
+            return ServerSideErrorResponse()
+        
+
+    @staticmethod
+    async def get_users(
+        page:int,
+        session:AsyncSession | None
+    ):
+        try:
+            if session is None: raise Exception()
+
+            limit:int = 10
+            offset:int = (page - 1) * limit
+
+            stmt = select(UserModel).where(
+                (UserModel.role != 3) &
+                (UserModel.account_status!="DISABLED")
+            ).limit(limit).offset(offset)
+
+            res:Result = await session.execute(stmt)
+            pendings:list[UserModel]= res.scalars().all()
+
+            if not pendings: return PendingAccountsResponse(code=404, message='No Accounts Yet')
+
+            count=select(func.count()).select_from(UserModel).where(
+                (UserModel.role != 3) &
+                (UserModel.account_status!="DISABLED")
+            )
+
+            count_res:Result=await session.execute(count)
+            total= count_res.scalar_one_or_none()
+            if not total: total = 0
+            total= max((total + limit-1)//limit, 1)
+
+            accounts:list[PendingAccountsInformation] = []
+            for p in pendings:
+                accounts.append(
+                    PendingAccountsInformation(
+                        id=p._id,
+                        full_name=p.full_name,
+                        email=p.email,
+                        account_status=p.account_status,
+                        role=p.role,
+                        created_at=p.created_at.strftime('%y-%m-%d %H:%M:%S')
+                    )
+                )
+            return UserAccountsResponse(code=200, message='Users Accounts Gathered', accounts=accounts, pages=total)
         except Exception as e:
             print(f'User Controller Exception:\n{e}')
             return ServerSideErrorResponse()

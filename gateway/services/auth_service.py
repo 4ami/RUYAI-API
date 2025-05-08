@@ -15,7 +15,8 @@ from views import (
     PendingAccountsResponse,
     UpdatedUserInformationByAdmin,
     UpdateUserByAdminRequest,
-    UnLockRequest
+    UnLockRequest,
+    UserAccountsResponse
 )
 
 from dotenv import load_dotenv
@@ -132,3 +133,12 @@ class AuthService(BaseService):
             from fastapi.exceptions import HTTPException
             raise HTTPException(status_code=response.status_code, detail=json['detail'])
         return UpdatedUserInformationByAdmin(**json)
+    
+    async def get_users(self, page:int):
+        endpoint:str= os.getenv('ADMIN_GET_ACCOUNTS')
+        response=await self.get(endpoint=endpoint, params={"page": page})
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
+        return UserAccountsResponse(**json)

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from core import GET_ENGINE
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
@@ -13,7 +13,8 @@ from controllers import UserController
 from views import (
     AdminUpdateUserRequest, 
     AdminUpdateUserResponse,
-    PendingAccountsResponse
+    PendingAccountsResponse,
+    UserAccountsResponse
 )
 
 
@@ -30,6 +31,22 @@ async def get_pendings(
         status_code=res.code,
         content=res.model_dump(exclude_none=True)
     )
+
+@admin_router.get(
+    path='/accounts',
+    status_code=200,
+    response_model=UserAccountsResponse
+)
+async def get_users(
+    page:int = Query(1, ge=1),
+    session: AsyncSession | None = Depends(GET_ENGINE)
+):
+    res = await UserController.get_users(page=page, session=session)
+    return JSONResponse(
+        status_code=res.code,
+        content=res.model_dump(exclude_none=True)
+    )
+
 
 @admin_router.put(
     path='/update/user',
