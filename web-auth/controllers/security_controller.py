@@ -52,7 +52,7 @@ class SecurityController:
             _usr.locked=True
             await session.commit()
             mailutil:MailUtil = MailUtil()
-            await mailutil.send_unlock(to=_usr.email, link='http://localhost:8000/')
+            await mailutil.send_unlock(to=_usr.email, link=f'https://ruyai.hive-sa.dev/unlock/{_usr.email}')
             return Lock200()
         except Exception as e:
             print(e)

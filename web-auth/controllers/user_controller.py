@@ -292,7 +292,7 @@ class UserController:
             await session.commit()
             # send
             mailutil=MailUtil()
-            await mailutil.send_reset(to=to_insert.email, link=f'http://localhost:8000/{to_insert.token}')
+            await mailutil.send_reset(to=to_insert.email, link=f'https://ruyai.hive-sa.dev/{to_insert.token}')
 
             return ForgetPasswordResponse(code=200, message='Reset Password Link Sent to Your Email')
         except Exception as e:

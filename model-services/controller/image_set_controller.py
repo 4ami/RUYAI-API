@@ -6,6 +6,7 @@ from utility import PathManager, ModelManager, CNN, Destination, ModelType
 from sqlalchemy.future import select
 from sqlalchemy import func
 import numpy as np
+from uuid import UUID
 from view import (
     ResponseBaseModel, 
     Diagnosis200, 
@@ -65,7 +66,7 @@ class ImageSetController:
     @staticmethod
     def _create_image(img:tuple[str,str], report_id:int)->ImageSetModel:
         img_diagnose:ImageSetModel= ImageSetModel()
-        img_diagnose.name= img[0].split('.')[0]
+        img_diagnose.name= UUID(img[0].split('.')[0])
         img_diagnose.extension = img[1].split('.')[-1]
         img_diagnose.path= Destination.ROOT.value
         img_diagnose.report_id= report_id
@@ -79,7 +80,7 @@ class ImageSetController:
     def __fill_diagnose(data:ImageSetModel, sent:str, thrshold:float=__THRESHOLD__)->Diagnosis:
         return Diagnosis(
             image_sent=sent,
-            stored_as=data.name,
+            stored_as=str(data.name),
             glaucoma=data.glaucoma_diagnose,
             glaucoma_propability=data.glaucoma_confidence,
             threshold_used=thrshold,
@@ -157,7 +158,7 @@ class ImageSetController:
             if not name: raise Exception('Invalid name')
 
             stmt=select(ImageSetModel).where(
-                (ImageSetModel.name == name) &
+                (ImageSetModel.name == UUID(name)) &
                 (ImageSetModel.extension==ext)
             )
 
