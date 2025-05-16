@@ -67,7 +67,7 @@ class ImageSetController:
     def _create_image(img:tuple[str,str], report_id:int)->ImageSetModel:
         img_diagnose:ImageSetModel= ImageSetModel()
         img_diagnose.name= UUID(img[0].split('.')[0])
-        img_diagnose.extension = img[1].split('.')[-1]
+        img_diagnose.extension = img[1].split('.')[-1].lower()
         img_diagnose.path= Destination.ROOT.value
         img_diagnose.report_id= report_id
         return img_diagnose

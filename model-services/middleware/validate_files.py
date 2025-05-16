@@ -11,7 +11,7 @@ def validate_oct_middleware(
     allowed:list[str]=['png', 'jpg', 'jpeg']
     allowed_size:int=800*1000
     for file in octs:
-        if file.filename.split('.')[-1] not in allowed:
+        if file.filename.split('.')[-1].lower() not in allowed:
             raise HTTPException(
                 status_code=400,
                 detail={

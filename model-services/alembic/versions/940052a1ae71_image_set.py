@@ -24,7 +24,7 @@ def upgrade() -> None:
         sa.Column(name='_id', type_=sa.BigInteger, primary_key=True, autoincrement=True),
         sa.Column(name='name', type_=sa.UUID, nullable=False, unique=True),
         sa.Column(name='path', type_=sa.String(255), nullable=False),
-        sa.Column(name='extension', type_=sa.String(3), nullable=False),
+        sa.Column(name='extension', type_=sa.String(5), nullable=False),
         sa.Column(name='glaucoma_diagnose', type_=sa.Enum('POSITIVE', 'NEGATIVE', name='glaucoma_diagnose'), nullable=False),
         sa.Column(name='glaucoma_confidence', type_=sa.NUMERIC(precision=11, scale=10), nullable=False),
         sa.Column(name='severity', type_=sa.Enum('MILD', 'MODERATE', 'SEVERE', 'NORMAL', name='severity'), nullable=False),

@@ -23,7 +23,7 @@ class PathManager:
         
         for oct in octs:
             _id:str=f'{uuid.uuid4()}'
-            ext:str = oct.filename.split('.')[-1]
+            ext:str = oct.filename.split('.')[-1].lower()
             uploaded:str=f'{_id}.{ext}'
             path=os.path.join(Destination.ROOT.value, uploaded)
             with open(path, 'wb') as buf:
