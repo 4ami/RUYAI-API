@@ -16,7 +16,9 @@ from views import (
     UpdatedUserInformationByAdmin,
     UpdateUserByAdminRequest,
     UnLockRequest,
-    UserAccountsResponse
+    UserAccountsResponse,
+    GenerateApiKeyRequest,
+    GenerateApiKeyResponse
 )
 
 from dotenv import load_dotenv
@@ -73,6 +75,14 @@ class AuthService(BaseService):
             from fastapi.exceptions import HTTPException
             raise HTTPException(status_code=response.status_code, detail=json['detail'])
         return BaseResponse(**json)
+    
+    async def generate(self, data:GenerateApiKeyRequest):
+        response=await self.post(endpoint=os.getenv('AUTH_KEY_GEN'), data=data)
+        json=response.json()
+        if response.status_code == 422:
+            from fastapi.exceptions import HTTPException
+            raise HTTPException(status_code=response.status_code, detail=json['detail'])
+        return GenerateApiKeyResponse(**json)
 
     async def verify(self, data:VerifyTokenRequest)->VerifyTokenResponse:
         response=await self.post(endpoint=os.getenv('AUTH_VER'), data=data)

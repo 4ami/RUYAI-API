@@ -77,3 +77,16 @@ async def unlock_account(req:UnLockRequest):
         status_code=response.code,
         content=response.model_dump(exclude_none=True)
     )
+
+from views import GenerateApiKeyRequest
+@auth_router.post(
+    path='/keys/generate',
+    status_code=201,
+    response_model=BaseResponse
+)
+async def generate(req:GenerateApiKeyRequest):
+    response =await __SERVICE__.generate(data=req)
+    return JSONResponse(
+        status_code=response.code,
+        content=response.model_dump(exclude_none=True)
+    )

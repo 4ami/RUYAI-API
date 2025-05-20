@@ -1,1 +1,2 @@
 from .verify_token_request import VerifyTokenRequest
+from .generate_api_key_request import GenerateApiKeyRequest

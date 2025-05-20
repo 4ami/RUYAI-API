@@ -6,3 +6,6 @@
 **/_data/*
 *.cred
 *.DS_Store
+model-services/imgs
+model-services/imgs/*
+model-services/visualization.py

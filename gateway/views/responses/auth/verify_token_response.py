@@ -19,3 +19,7 @@ class VerifyTokenResponse(BaseResponse):
         default=None,
         title='User Role'
     )
+    key:Optional[str]=Field(
+        default=None,
+        title='API Secret Key'
+    )

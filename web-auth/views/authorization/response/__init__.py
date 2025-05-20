@@ -1,2 +1,3 @@
 from .verify_token_response import VerifyTokenResponse
 from .is_admin_response import IsAdminResponse
+from .generate_api_key_response import GenerateApiKeyResponse

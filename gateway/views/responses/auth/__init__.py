@@ -3,3 +3,4 @@ from .login_response import AuthLoginResponse, LOGIN_RESPONSES
 from .unauthorized_response import UnauthorizedResponse
 from .forbidden_response import ForbiddenResponse
 from .verify_token_response import VerifyTokenResponse
+from .generate_api_key_response import GenerateApiKeyResponse

@@ -5,3 +5,4 @@ from .verify_token_request import VerifyTokenRequest
 from .forget_password_request import ForgetPasswordRequest
 from .reset_password_request import ResetPasswordRequest
 from .unlock_request import UnLockRequest
+from .generate_api_key_request import GenerateApiKeyRequest

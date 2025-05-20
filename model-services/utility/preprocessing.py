@@ -35,11 +35,14 @@ class Preprocessing:
         return image
 
     @staticmethod
-    def prepare(img_ref:str, model_type:ModelType):
+    def prepare(img_ref:str, model_type:ModelType, test:bool = False):
         preprocessing:Preprocessing=Preprocessing(type_=model_type)
         type_:str = img_ref.split('.')[-1]
         if model_type == ModelType.DETECTION:
-            image=preprocessing._load_(ref=f'_data/{img_ref}', img_type=type_)
+            if test:
+                image=preprocessing._load_(ref=f'{img_ref}', img_type=type_)
+            else:
+                image=preprocessing._load_(ref=f'_data/{img_ref}', img_type=type_)
             image=image/255.0
             image=(image-preprocessing.MEAN)/preprocessing.STD
             image=tf.expand_dims(image, axis=0)

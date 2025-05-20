@@ -26,3 +26,7 @@ class VerifyTokenResponse(BaseModel):
         default=None,
         title='User Role'
     )
+    key:Optional[str]=Field(
+        default=None,
+        title='API Secret Key'
+    )

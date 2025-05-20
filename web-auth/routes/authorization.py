@@ -40,3 +40,18 @@ async def is_admin(id:int, session:AsyncSession|None=Depends(GET_ENGINE)):
         status_code=res.code,
         content=res.model_dump()
     )
+
+from views import GenerateApiKeyResponse, GenerateApiKeyRequest
+from controllers import ApiKeysController
+@authorization.post(
+    path='/api-key/generate',
+    description='Generate Api Key for IT Staff',
+    status_code=201,
+    response_model=GenerateApiKeyResponse
+)
+async def generate(req:GenerateApiKeyRequest, session:AsyncSession|None=Depends(GET_ENGINE)):
+    res = await ApiKeysController.generate(id=req.id, session=session)
+    return JSONResponse(
+        status_code=res.code,
+        content=res.model_dump(exclude_none=True)
+    )

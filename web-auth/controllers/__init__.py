@@ -2,3 +2,4 @@ from .user_controller import UserController
 from .security_controller import SecurityController
 from .authorization_controller import AuthorizationController
 from .role_controller import RoleController
+from .api_keys import ApiKeysController
